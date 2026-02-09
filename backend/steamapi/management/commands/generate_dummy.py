@@ -3,12 +3,22 @@ from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from faker import Faker
-from steamapi.models import steamapi
+from steamapi.models import tblSensorData
 
 class Command(BaseCommand):
     help = 'Generate dummy data'
 
+    def add_arguments(self, parser):
+        parser.add_argument( '--clear', action='store_true', help='Delete all dummy data', )
+
     def handle(self, *args, **options):
+
+        if options['clear']:
+            count = tblSensorData.objects.all().count()
+            tblSensorData.objects.all().delete()
+            self.stdout.write(self.style.SUCCESS(f'Successfully deleted {count} records.'))
+            return
+
         fake = Faker()
         device_id = "SN-WATER-001"
         now = timezone.now()
@@ -19,7 +29,7 @@ class Command(BaseCommand):
         for i in range(144):
             recorded_at = now - timedelta(minutes=10 * i)
 
-            steamapi.objects.create(
+            tblSensorData.objects.create(
                 device_id=device_id,
                 recorded_at=recorded_at,
                 rssi=random.randint(-120, -90),
