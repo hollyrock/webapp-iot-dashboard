@@ -30,7 +30,7 @@ The project uses Docker Compose for the backend and database, and a separate dev
     DB_PORT="5432"
     ```
 
-2.  **Start Services:** Build and run the PostgreSQL database and Django backend services.
+2.  **Start Services:** Build and run the PostgreSQL database and Django backend services for production.
     ```bash
     docker-compose up -d --build
     ```
@@ -40,6 +40,28 @@ The project uses Docker Compose for the backend and database, and a separate dev
     docker-compose exec backend python manage.py migrate
     ```
     The Django development server will be running on `http://localhost:8000`.
+
+### Backend Development
+
+1.  **Start PostgreSQL docker service:**
+    ```bash
+    docker compose up -d db
+    ```
+
+2.  **Navigate to Backend Directory:**
+    ```bash
+    cd backend
+    ```
+
+3.  **Install Dependencies:**
+    ```bash
+    pip install -r requirement.txt
+    ```
+
+4.  **Start Development Server:**
+    ```bash
+    python manage.py runserver 0.0.0:8888
+    ```
 
 ### Frontend Development
 
