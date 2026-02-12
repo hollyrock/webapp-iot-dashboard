@@ -38,7 +38,7 @@ const sensorStore = useSensorStore()
 
 const chartOption = computed(() => {
 
-    const data = sensorStore.sortedData
+    const data = sensorStore.filteredData
     const timeData = data.map(d => new Date(d.recorded_at).toLocaleTimeString())
 
     return{
@@ -83,8 +83,8 @@ const chartOption = computed(() => {
       <div v-if="sensorStore.loading" class="d-flex align-center justify-center fill-height">
         <v-progress-circular indeterminate></v-progress-circular>
       </div>
-      <e-chart v-else-if="sensorStore.sensorData.length" :option="chartOption" autoresize />
+      <e-chart v-else-if="sensorStore.filteredData.length" :option="chartOption" autoresize />
 
       <v-alert v-else type="info" variant="tonal" class="ma-4">No Data</v-alert>
     </v-card>
-  </template>
+</template>

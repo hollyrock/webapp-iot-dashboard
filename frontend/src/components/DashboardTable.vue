@@ -23,7 +23,7 @@ const formatDate = (dateStr: string) => {
     <v-card border flat>
         <v-data-table
             :headers="headers"
-            :items="sensorStore.sensorData"
+            :items="sensorStore.filteredData"
             :loading="sensorStore.loading"
             density="compact"
             no-data-text="No data."

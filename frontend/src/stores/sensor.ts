@@ -1,36 +1,58 @@
+import { ref, computed } from 'vue'
 import type { SensorData } from '../types/sensor'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
-export const useSensorStore = defineStore('sensor', {
-    state: () => ({
-        sensorData: [] as SensorData[],
-        loading: false,
-        error: null as string | null,
-    }),
+// todo:Rewrite as Setup Store (Composition API)
+export const useSensorStore = defineStore('sensor', () => {
+    const sensorData = ref<SensorData[]>([])
+    const loading = ref(false)
+    const filterRange = ref('all')
+    const error = ref<string | null>(null)
 
-    getters: {
-        sortedData: (state) => {
-            return [...state.sensorData].sort((a, b) =>
-                new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
-            )
-        },
-        latestData: (state) => state.sensorData[0] || null
-    },
+    const filteredData = computed(() => {
+        const now = new Date()
 
-    actions: {
-        async fetchSensors() {
-            this.loading = true
-            this.error = null
-            try {
-                const response = await axios.get<SensorData[]>('http://localhost:8888/api/sensors/')
-                this.sensorData = response.data
-            } catch (err) {
-                this.error = 'Failed to get data from database.'
-                console.error(err)
-            } finally {
-                this.loading = false
+        const filtered = sensorData.value.filter(d => {
+            const recordDate = new Date( d.recorded_at )
+            if ( filterRange.value === 'today') {
+                return recordDate.toDateString() === now.toDateString()
+            } else if ( filterRange.value === 'last3h') {
+                const threeHourAgo = new Date(now.getTime() - 3 * 60 * 60 *1000)
+                return recordDate >= threeHourAgo
             }
+            return true;
+        })
+        return filtered.sort((a, b) =>
+            new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
+        )
+    })
+
+    const latestData = computed(() =>{
+        return sensorData.value[0] || null
+    })
+
+    const fetchSensors = async () =>{
+        loading.value = true
+        error.value = null
+        try {
+            const response = await axios.get<SensorData[]>('http://localhost:8888/api/sensors/')
+            sensorData.value = response.data
+        } catch (err) {
+            error.value = 'Failed to get data from database.'
+            console.error(err)
+        } finally {
+            loading.value = false
         }
+    }
+
+    return {
+        sensorData,
+        loading,
+        error,
+        filterRange,
+        filteredData,
+        latestData,
+        fetchSensors
     }
 })

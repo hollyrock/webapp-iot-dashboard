@@ -3,8 +3,9 @@
 import { onMounted } from 'vue'
 import { useSensorStore } from './stores/sensor'
 
-import SensorChart from './components/SensorChart.vue';
-import DashboardTable from './components/DashboardTable.vue';
+import SensorChart from './components/SensorChart.vue'
+import DashboardTable from './components/DashboardTable.vue'
+import FilterControl from './components/FilterControl.vue'
 
 const sensorStore = useSensorStore()
 
@@ -26,11 +27,16 @@ onMounted(() => {
             <v-container fluid>
                 <v-row>
                     <v-col cols="12">
+                        <FilterControl />
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12">
                         <SensorChart
                             title="Water Level"
                             :metrics="[{
                                 key: 'water_distance_mm',
-                                label: 'water Level',
+                                label: 'Water Level',
                                 color: '#00968B',
                                 unit: 'mm'
                             }]"
@@ -43,13 +49,13 @@ onMounted(() => {
                             :metrics="[
                                 {
                                     key: 'temperature_c',
-                                    label: 'temperature',
+                                    label: 'Temperature',
                                     color: '#FF7043',
                                     unit: 'C'
                                 },
                                 {
                                     key: 'humidity_pct',
-                                    label: 'humidity',
+                                    label: 'Humidity',
                                     color: '#29B6F6',
                                     unit: '%'
                                 },
@@ -63,13 +69,13 @@ onMounted(() => {
                             :metrics="[
                                 {
                                     key: 'pressure_hpa',
-                                    label: 'pressure',
+                                    label: 'Pressure',
                                     color: '#7E57C2',
                                     unit: 'hPa'
                                 },
                                 {
                                     key: 'lux_lx',
-                                    label: 'lux',
+                                    label: 'Lux',
                                     color: '#FBC02D',
                                     unit: 'lx'
                                 },
