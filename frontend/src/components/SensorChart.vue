@@ -23,35 +23,40 @@ use([
     DataZoomComponent,
 ]);
 
+const props = defineProps<{
+    title: string;
+    metrics: {
+        key: keyof SensorData;
+        label: string;
+        color: string;
+        unit: string;
+    }[];
+    yAxisRight?: boolean;
+}>();
+
 const sensorStore = useSensorStore()
 
 const chartOption = computed(() => {
 
     const data = sensorStore.sortedData
+    const timeData = data.map(d => new Date(d.recorded_at).toLocaleTimeString())
 
     return{
-        title: { text: 'Water Level(mm)', left: 'center' },
-        tooltip: {
-            trigger: 'axis',
-            formatter: (params: any) => {
-                const p = params[0];
-                return `${p.name}<br/>Water Level: <strong>${p.value}</strong> mm`;
-            }
-        },
-        xAxis: {
-            type: 'category',
-            data: data.map(d => new Date(d.recorded_at).toLocaleTimeString()),
-            boundaryGap: false,
-        },
-        yAxis: {
-            type: 'value',
-            name: 'mm',
-            inverse: false, // you may need to set true depends on sensor configuration
-        },
+        title: { text: props.title, left: 'center' },
+        tooltip: { trigger: 'axis', },
+        legend: { bottom: 0 },
+        grid: { top: 60, left: '10%', right: '10%', bottom: 60 },
+
+        xAxis: { type: 'category', data: timeData, boundaryGap: false, },
+        yAxis: [
+            { type: 'value', name: props.metrics[0].unit, inverse: false, }, // you may need to set inverse true depends on sensor configuration
+            props.yAxisRight ? { type: 'value', name: props.metrics[1]?.unit, position: 'right' } : {}
+        ],
         dataZoom: [
             { type: 'inside', start: 0, end: 100 },
             { type: 'slider', bottom: 10 }
         ],
+
         visualMap: {
             show: false,
             dimension: 1,
@@ -60,17 +65,15 @@ const chartOption = computed(() => {
                 {lte: 500, color: '#FF5252'}
             ]
         },
-        series: [
-            {
-                name: 'Water Level',
-                type: 'line',
-                data: data.map(d => d.water_distance_mm),
-                smooth: true,
-                areaStyle: { opacity: 0.1 },
-                itemStyle: { color: '#009688' },
-                lineStyle: { width:3 }
-            },
-        ],
+        series: props.metrics.map(( m, index ) => ({
+            name: m.label,
+            type: 'line',
+            yAxisIndex: index > 0 && props.yAxisRight ? 1 : 0,
+            data: data.map( d=> d[m.key]),
+            smooth: true,
+            color: m.color,
+            showSymbol: false,
+        }))
     };
 });
 </script>

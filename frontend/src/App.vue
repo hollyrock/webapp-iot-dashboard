@@ -26,7 +26,55 @@ onMounted(() => {
             <v-container fluid>
                 <v-row>
                     <v-col cols="12">
-                        <SensorChart />
+                        <SensorChart
+                            title="Water Level"
+                            :metrics="[{
+                                key: 'water_distance_mm',
+                                label: 'water Level',
+                                color: '#00968B',
+                                unit: 'mm'
+                            }]"
+                        />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                        <SensorChart
+                            title="Temp./Hum."
+                            yAxisRight
+                            :metrics="[
+                                {
+                                    key: 'temperature_c',
+                                    label: 'temperature',
+                                    color: '#FF7043',
+                                    unit: 'C'
+                                },
+                                {
+                                    key: 'humidity_pct',
+                                    label: 'humidity',
+                                    color: '#29B6F6',
+                                    unit: '%'
+                                },
+                            ]"
+                        />
+                    </v-col>
+                    <v-col cols="12" md="6">
+                        <SensorChart
+                            title="Pressure/Lux"
+                            yAxisRight
+                            :metrics="[
+                                {
+                                    key: 'pressure_hpa',
+                                    label: 'pressure',
+                                    color: '#7E57C2',
+                                    unit: 'hPa'
+                                },
+                                {
+                                    key: 'lux_lx',
+                                    label: 'lux',
+                                    color: '#FBC02D',
+                                    unit: 'lx'
+                                },
+                            ]"
+                        />
                     </v-col>
                     <v-col>
                         <DashboardTable />
