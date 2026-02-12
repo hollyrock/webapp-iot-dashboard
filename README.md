@@ -1,27 +1,77 @@
-# IOT dashboard
+# Kicori - IoT Dashboard
 
-== NOTICE ==
-THIS PROJECT IS UNDER DEVELOPMENT
+This project is an IoT dashboard web application designed to analyze data from sensor devices.
 
-## SUMMARY
+## Core Technologies
 
-Dashboard web appliacation to analyze captured data sent from sensor devices (nodes) via TTN.
+*   **Backend:** Django, Django REST Framework, PostgreSQL
+*   **Frontend:** Vue.js 3, Vuetify, Axios, Vite
+*   **Infrastructure (Development):** Docker, Docker Compose
 
-## HOW TO RUN
+## Building and Running the Project
 
-1. create .env/.env.app file under project folder for .env and under backend folder for .env.app like sample (COMMON)
-2. run 'docker compose -d db' (DEBUG)
-3. run 'python manage.py migrate' (DEBUG)
-4. run 'python manage.py runserver 0.0.0.0:8888' (DEBUG)
+The project uses Docker Compose for the backend and database, and a separate development server for the frontend.
 
-### sample : .env/.env.app
+### Prerequisites
 
-```
-SECRET_KEY="your-django-secret-key"
-DB_NAME="your-database-name"
-DB_USER="user-name"
-DB_PASSWORD="password"
-#DB_HOST="db" for production
-DB_HOST="localhost" # for debug
-DB_PORT="5432"
-```
+*   Docker and Docker Compose
+*   Node.js and npm (for frontend development)
+
+### Backend and Database Setup (Docker Compose)
+
+1.  **Create `.env` file:** In the project root directory (`webapp-mars/`), create a `.env` file with your database credentials and Django secret key.
+
+    ```
+    SECRET_KEY="your-django-secret-key"
+    DB_NAME="your-database-name"
+    DB_USER="user-name"
+    DB_PASSWORD="password"
+    DB_HOST="db" # Hostname for the database service within Docker Compose
+    DB_PORT="5432"
+    ```
+
+2.  **Start Services:** Build and run the PostgreSQL database and Django backend services.
+    ```bash
+    docker-compose up -d --build
+    ```
+
+3.  **Run Migrations:** Apply Django database migrations.
+    ```bash
+    docker-compose exec backend python manage.py migrate
+    ```
+    The Django development server will be running on `http://localhost:8000`.
+
+### Frontend Development
+
+1.  **Navigate to Frontend Directory:**
+    ```bash
+    cd frontend
+    ```
+
+2.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Start Development Server:**
+    ```bash
+    npm run dev
+    ```
+    The Vite development server typically runs on `http://localhost:5173` and proxies API requests to the Django backend.
+
+## Development Commands
+
+### Generate Dummy Sensor Data
+
+This command generates 144 records of dummy sensor data, useful for populating your development database.
+
+*   **Generate Data:**
+    ```bash
+    docker-compose exec backend python manage.py generate_dummy
+    ```
+
+*   **Clear All Dummy Data:**
+    To delete all existing sensor data records before generating new ones:
+    ```bash
+    docker-compose exec backend python manage.py generate_dummy --clear
+    ```
